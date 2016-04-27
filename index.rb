@@ -29,6 +29,7 @@ post '/*' do
     puts "PUBLISH"
 
     msg = JSON.parse(data["Message"])["default"]
+    puts "publishing #{msg}"
     subscribers = $subscriptions[data["TopicArn"]] || []
     subscribers.each do |url|
       publish(url, msg, data["TopicArn"])
@@ -38,7 +39,7 @@ post '/*' do
 end
 
 def publish(url, msg, topic)
-  puts "publishing #{msg} on #{url}"
+  puts "publishing on #{url}"
   RestClient.post(url, "{\"Message\": #{msg.to_json}}", content_type: :json, accept: :json, "x-amz-sns-topic-arn" => topic )
 rescue => ex
   puts "*** PUBLISH ERROR"
